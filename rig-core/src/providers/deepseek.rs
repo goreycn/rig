@@ -662,6 +662,13 @@ where
         tracing::debug!("DeepSeek completion request: {request:?}");
 
         let body = serde_json::to_vec(&request)?;
+        
+        tracing::trace!(
+            target: "rig",
+            "DeepSeek request serialized: {}",
+            String::from_utf8_lossy(&body)
+        );
+        
         let req = self
             .client
             .req(Method::POST, "/chat/completions")?
@@ -669,10 +676,19 @@ where
             .body(body)
             .map_err(|e| CompletionError::HttpError(e.into()))?;
 
+        tracing::trace!(
+            target: "rig",
+            "DeepSeek HTTP request constructed: POST /chat/completions"
+        );
+
+        
         async move {
+            tracing::trace!(target: "rig", "Sending DeepSeek completion request...");
             let response = self.client.http_client.send::<_, Bytes>(req).await?;
+            tracing::trace!(target: "rig", "DeepSeek response received.");
+        
             let status = response.status();
-            let response_body = response.into_body().into_future().await?.to_vec();
+            tracing::trace!(target: "rig", "DeepSeek HTTP status: {}", status);
 
             // 新增 trace 日志
             tracing::trace!(
@@ -682,8 +698,11 @@ where
             );
             
             if status.is_success() {
+                tracing::trace!(target: "rig", "DeepSeek response status is success, parsing...");
+           
                 match serde_json::from_slice::<ApiResponse<CompletionResponse>>(&response_body)? {
                     ApiResponse::Ok(response) => {
+                        tracing::trace!(target: "rig", "DeepSeek ApiResponse::Ok variant matched.");
                         let span = tracing::Span::current();
                         span.record(
                             "gen_ai.output.messages",
@@ -694,15 +713,27 @@ where
                             "gen_ai.usage.output_tokens",
                             response.usage.completion_tokens,
                         );
-                        tracing::debug!(target: "rig", "DeepSeek completion output: {}", serde_json::to_string_pretty(&response_body)?);
-
+        
+                        tracing::debug!(
+                            target: "rig",
+                            "DeepSeek completion output (pretty): {}",
+                            serde_json::to_string_pretty(&response_body)?
+                        );
+                        tracing::trace!(target: "rig", "DeepSeek response successfully parsed.");
                         response.try_into()
                     }
-                    ApiResponse::Err(err) => Err(CompletionError::ProviderError(err.message)),
+                    ApiResponse::Err(err) => {
+                        tracing::trace!(target: "rig", "DeepSeek ApiResponse::Err variant matched.");
+                        Err(CompletionError::ProviderError(err.message))
+                    }
                 }
             } else {
+                tracing::trace!(
+                    target: "rig",
+                    "DeepSeek response status not success, returning error."
+                );
                 Err(CompletionError::ProviderError(
-                    String::from_utf8_lossy(&response_body).to_string()
+                    String::from_utf8_lossy(&response_body).to_string(),
                 ))
             }
         }
