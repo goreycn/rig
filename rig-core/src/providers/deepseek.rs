@@ -254,8 +254,8 @@ pub struct CompletionResponse {
 pub struct Usage {
     pub completion_tokens: u32,
     pub prompt_tokens: u32,
-    pub prompt_cache_hit_tokens: u32,
-    pub prompt_cache_miss_tokens: u32,
+    // pub prompt_cache_hit_tokens: u32,
+    // pub prompt_cache_miss_tokens: u32,
     pub total_tokens: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub completion_tokens_details: Option<CompletionTokensDetails>,
@@ -268,8 +268,8 @@ impl Usage {
         Self {
             completion_tokens: 0,
             prompt_tokens: 0,
-            prompt_cache_hit_tokens: 0,
-            prompt_cache_miss_tokens: 0,
+            // prompt_cache_hit_tokens: 0,
+            // prompt_cache_miss_tokens: 0,
             total_tokens: 0,
             completion_tokens_details: None,
             prompt_tokens_details: None,
