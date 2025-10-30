@@ -697,6 +697,11 @@ where
                 "DeepSeek completion raw response: {}",
                 String::from_utf8_lossy(&response_body)
             );
+            tracing::trace!(
+                target: "rig",
+                "DeepSeek completion raw response - 2: {}",
+                std::str::from_utf8(&response_body)
+            );
             
             if status.is_success() {
                 tracing::trace!(target: "rig", "DeepSeek response status is success, parsing...");
