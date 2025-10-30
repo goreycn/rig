@@ -690,6 +690,7 @@ where
             let status = response.status();
             tracing::trace!(target: "rig", "DeepSeek HTTP status: {}", status);
 
+            let response_body = response.into_body().into_future().await?.to_vec();            
             // 新增 trace 日志
             tracing::trace!(
                 target: "rig",
