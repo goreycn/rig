@@ -697,10 +697,12 @@ where
                 "DeepSeek completion raw response: {}",
                 String::from_utf8_lossy(&response_body)
             );
+
+            let response_text = std::str::from_utf8(&response_body).map_err(|e| MyError::EncodingError(e.to_string()))?;            
             tracing::trace!(
                 target: "rig",
                 "DeepSeek completion raw response - 2: {}",
-                std::str::from_utf8(&response_body)
+                response_text
             );
             
             if status.is_success() {
