@@ -638,8 +638,13 @@ where
         crate::completion::CompletionError,
     > {
         let preamble = completion_request.preamble.clone();
-        let request = self.create_completion_request(completion_request)?;
+        let mut request = self.create_completion_request(completion_request)?;
 
+        request = merge(
+            request,
+            json!({"stream": false}),
+        );
+        
         let span = if tracing::Span::current().is_disabled() {
             info_span!(
                 target: "rig::completions",
