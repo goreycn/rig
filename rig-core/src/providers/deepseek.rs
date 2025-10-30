@@ -674,6 +674,13 @@ where
             let status = response.status();
             let response_body = response.into_body().into_future().await?.to_vec();
 
+            // 新增 trace 日志
+            tracing::trace!(
+                target: "rig",
+                "DeepSeek completion raw response: {}",
+                String::from_utf8_lossy(&response_body)
+            );
+            
             if status.is_success() {
                 match serde_json::from_slice::<ApiResponse<CompletionResponse>>(&response_body)? {
                     ApiResponse::Ok(response) => {
