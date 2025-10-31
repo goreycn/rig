@@ -719,13 +719,6 @@ where
                             "gen_ai.usage.output_tokens",
                             response.usage.completion_tokens,
                         );
-        
-                        tracing::debug!(
-                            target: "rig",
-                            "DeepSeek completion output (pretty): {}",
-                            serde_json::to_string_pretty(&response_body)?
-                        );
-                        tracing::trace!(target: "rig", "DeepSeek response successfully parsed.");
                         response.try_into()
                     }
                     ApiResponse::Err(err) => {
