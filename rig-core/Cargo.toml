@@ -79,7 +79,7 @@ tracing-opentelemetry = "0.31.0"
 
 
 [features]
-default = ["reqwest-tls"]
+default = ["reqwest-rustls"]
 all = ["derive", "pdf", "rayon"]
 audio = []
 image = []
@@ -92,7 +92,9 @@ rayon = ["dep:rayon"]
 worker = ["dep:worker", "dep:wasm-bindgen-futures", "futures-timer/wasm-bindgen"]
 rmcp = ["dep:rmcp"]
 socks = ["reqwest/socks"]
-reqwest-tls = ["reqwest/default"]
+
+# reqwest-tls = ["reqwest/default"]
+
 # Replace "default-tls" with "rustls-tls" in "reqwest/default"
 reqwest-rustls = [
     "reqwest/rustls-tls",
