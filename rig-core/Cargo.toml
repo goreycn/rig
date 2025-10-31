@@ -29,7 +29,7 @@ mime_guess.workspace = true
 ordered-float = { workspace = true }
 quick-xml = { workspace = true, optional = true }
 rayon = { workspace = true, optional = true }
-reqwest = { workspace = true, features = ["json", "stream", "multipart", "rustls-tls"] }
+reqwest = { workspace = true, default-features = false, features = ["json", "stream", "multipart", "rustls-tls"] }
 rig-derive = { version = "0.1.7", path = "rig-core-derive", optional = true }
 schemars = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
